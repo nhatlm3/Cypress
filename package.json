@@ -8,17 +8,22 @@
         "start": "next start",
         "lint": "next lint",
         "cypress": "cypress open",
-        "cypress:headless": "cypress run --record --key d8aac9a5-5ec3-487c-86c2-8d1efbd7a52f",
+        "cypress:headless": "cypress run",
         "test": "start-server-and-test start http://localhost:3000 cypress:headless",
+        "api-tests": "start-server-and-test start http://localhost:3000 cypress",
         "test:headless": "start-server-and-test start http://localhost:3000 cypress:headless"
     },
     "dependencies": {
         "@nextui-org/react": "^1.0.0-beta.6",
+        "chai": "^4.3.6",
+        "classnames": "^2.3.1",
         "cypress": "^9.6.1",
         "next": "12.1.6",
         "react": "18.1.0",
         "react-dom": "18.1.0",
-        "start-server-and-test": "^1.14.0"
+        "react-hook-form": "^7.32.1",
+        "start-server-and-test": "^1.14.0",
+        "yup": "^0.32.11"
     },
     "devDependencies": {
         "@types/node": "^17.0.31",
