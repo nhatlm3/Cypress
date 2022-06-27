@@ -1,22 +1,27 @@
-import { useState } from 'react';
-import { Modal, Input, Row, Checkbox, Button, Text } from '@nextui-org/react';
-import Mail from '@/components/Mail';
-import Password from '@/components/Password';
 import styles from './login.module.scss';
 import userService from '../../service/login.service';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
+import { alertService } from '../../service/alert.service';
+import { Alert } from '../../components/Alert';
+
+import { useRouter } from 'next/router';
 function login() {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [visible, setVisible] = useState(false);
-  const handler = () => setVisible(true);
-  const closeHandler = () => {
-    setVisible(false);
-    console.log("closed");
-  };
-  const onSubmitForm = async (e: any) => {
-    setVisible(true);
-    const data = {email: e.target.email.value, password: e.target.password.value}
-    await userService.login(data);
-    // console.log(result);
+  const router = useRouter();
+  const validationSchema = Yup.object().shape({
+    username: Yup.string().required('Username is required'),
+    password: Yup.string().required('Password is required')
+  })
+  const formOptions = { resolver: yupResolver(validationSchema) };
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { register, handleSubmit, formState } = useForm(formOptions);
+    const { errors } = formState;
+  const onSubmitForm = (data: any) => {
+    return userService.login(data.username, data.password).then(() => {
+      router.push('/');
+    }).catch(alertService.error);
   }
   return (
     <>
@@ -24,71 +29,44 @@ function login() {
       <div className={styles.fullPageLogin}>
         <div className={styles.container}>
           <div className={styles.child}>
-            <Button auto color="warning" shadow onClick={handler}>
+            {/* <Button auto color="warning" shadow onClick={handler}>
               Open Login Modal
-            </Button>
+            </Button> */}
+            <Alert />
+            <div className='card mt-5'>
+              <h4 className="card-header">Login</h4>
+              <div className="card-body">
+                    <form onSubmit={handleSubmit(onSubmitForm)}>
+                        <div className="form-group">
+                            <label>Username</label>
+                            <input
+                              color="primary"
+                              id="username"
+                              placeholder="Username"
+                              required type="text" {...register('username')} className={`form-control ${errors.username ? 'is-invalid' : ''}`} />
+                            <div className="invalid-feedback">{errors.username?.message}</div>
+                        </div>
+                        <div className="form-group">
+                            <label>Password</label>
+                            <input
+                              id="password"
+                              color="primary"
+                              pattern='(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'
+                              title='Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters'
+                              type="password"
+                              placeholder="Password"
+                              required {...register('password')} className={`form-control ${errors.password ? 'is-invalid' : ''}`} />
+                              <div className="invalid-feedback">{errors.password?.message}</div>
+                        </div>
+                        <button type='submit' className="btn btn-primary mt-3">
+                            Login
+                        </button>
+                    </form>
+                </div>
+            </div>
           </div>
         </div>
       </div>
-        <Modal
-        closeButton
-        blur
-        aria-labelledby="modal-title"
-        open={visible}
-        onClose={closeHandler}
-      >
-        <form onSubmit={onSubmitForm}>
-          <Modal.Header>
-            <Text id="modal-title" size={18}>
-              Welcome to
-              <Text b size={18}>
-                NextUI
-              </Text>
-            </Text>
-          </Modal.Header>
-          <Modal.Body>
-            <Input
-              clearable
-              bordered
-              fullWidth
-              color="primary"
-              size="lg"
-              id="email"
-              type="email"
-              placeholder="Email"
-              contentLeft={<Mail fill="currentColor" />}
-            />
-            <Input
-              clearable
-              bordered
-              fullWidth
-              id="password"
-              color="primary"
-              type="password"
-              size="lg"
-              placeholder="Password"
-              contentLeft={<Password fill="currentColor" />}
-            />
-            <Row justify="space-between">
-              <Checkbox>
-                <Text size={14}>Remember me</Text>
-              </Checkbox>
-              <Text size={14}>Forgot password?</Text>
-            </Row>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button auto flat color="error">
-              Close
-            </Button>
-            <Button id="submit" type='submit'>
-              Sign in
-            </Button>
-          </Modal.Footer>
-        </form>
-          
-      </Modal>
-      {/* </Layout> */}
-
     </>
   )
 }

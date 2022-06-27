@@ -1,4 +1,5 @@
 import '../styles/globals.css'
+import 'bootstrap/dist/css/bootstrap.css'
 import { createTheme, NextUIProvider, Text } from '@nextui-org/react'
 import { AppProps } from 'next/app';
 import { useRouter } from 'next/router';

@@ -1,5 +1,4 @@
 {
   "baseUrl": "http://localhost:3000/",
-  "projectId": "7c8u5t",
-  "integrationFolder": "cypress/integration/api-tests"
+  "projectId": "7c8u5t"
 }
