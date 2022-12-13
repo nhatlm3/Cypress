@@ -1,0 +1,9 @@
+service: default
+runtime: nodejs16
+
+handlers:
+  - url: /.*
+    script: auto
+
+automatic_scaling:
+  max_concurrent_requests: 80
